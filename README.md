@@ -1,5 +1,5 @@
 # PSPDFKit API wrapper
-`py-pspdfkit` is a simple API wrapper for [PSPDFKit](https://pspdfkit.com/).
+`py-pspdfkit` is a simple API wrapper for [PSPDFKit](https://pspdfkit.com/). ![travis](https://api.travis-ci.org/tizz98/py-pspdfkit.svg?branch=master)
 
 ## Installation
 `pip install py-pspdfkit`
