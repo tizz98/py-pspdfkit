@@ -1,0 +1,15 @@
+# PSPDFKit API wrapper
+`py-pspdfkit` is a simple API wrapper for [PSPDFKit](https://pspdfkit.com/).
+
+## Installation
+`pip install py-pspdfkit`
+
+## Usage
+```python
+from pspdfkit import API
+client = API('http://localhost:5000', 'secret')
+client.upload_file_from_url(
+    'https://isotropic.org/papers/chicken.pdf',
+    'cc90ea63a926fe36a9c92fab0ca246db40f34e39170764153c13e427e4acc1fb'
+)
+```

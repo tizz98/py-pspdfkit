@@ -3,7 +3,7 @@ from pspdfkit import __version__
 
 
 setup(
-    name="pspdfkit",
+    name="py-pspdfkit",
     version=__version__,
     url="https://github.com/tizz98/py-pspdfkit",
     download_url="https://github.com/tizz98/py-pspdfkit/tarball/{version}".format(
