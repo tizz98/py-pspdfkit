@@ -29,17 +29,24 @@ class API:
 
     def upload_file_from_path(self, file_path):
         file_name = os.path.basename(file_path)
-        mime_type = magic.from_file(file_path, mime=True)
 
         with open(file_path, 'rb') as file_obj:
-            return self._post('documents', files={
-                'file': (
-                    file_name,
-                    file_obj,
-                    mime_type,
-                    {},
-                ),
-            })
+            return self.upload_file_from_obj(file_obj, file_name)
+
+    def upload_file_from_obj(self, file_obj, file_name):
+        try:
+            mime_type = magic.from_buffer(file_obj.read(1024), mime=True)
+        finally:
+            file_obj.seek(0)
+
+        return self._post('documents', files={
+            'file': (
+                file_name,
+                file_obj,
+                mime_type,
+                {},
+            ),
+        })
 
     def upload_file_from_url(self, url, sha256):
         return self._post('documents', json={'url': url, 'sha256': sha256})
@@ -60,11 +67,14 @@ class API:
 
     @classmethod
     def sha256(cls, file_path):
-        sha256 = hashlib.sha256()
         with open(file_path, 'rb') as f:
-            for block in iter(lambda: f.read(65536), b''):
-                sha256.update(block)
+            return cls.sha256_file_obj(f)
 
+    @classmethod
+    def sha256_file_obj(cls, file_obj):
+        sha256 = hashlib.sha256()
+        for block in iter(lambda: file_obj.read(65536), b''):
+            sha256.update(block)
         return sha256.hexdigest()
 
     def _get(self, endpoint, params=None, **kwargs):
