@@ -1,4 +1,5 @@
 import hashlib
+import json
 import os
 
 import magic
@@ -25,6 +26,7 @@ class API:
     def _headers(self):
         return {
             'Authorization': 'Token token={}'.format(self.api_key),
+            'PSPDFKit-API-Version': '2017.7',
         }
 
     def upload_file_from_path(self, file_path):
@@ -65,6 +67,30 @@ class API:
     def delete_document(self, document_id):
         return self._delete('documents/{}'.format(document_id))
 
+    def get_annotations(self, document_id, page=None):
+        url_kwargs = {'page': page, 'document_id': document_id}
+
+        if page is None:
+            endpoint = 'documents/{document_id}/annotations'
+        else:
+            endpoint = 'documents/{document_id}/pages/{page}/annotations'
+
+        return self._ndjson_request('get', endpoint.format(**url_kwargs))
+
+    def add_annotation(self, document_id, annotation):
+        return self._post('documents/{}/annotations'.format(document_id),
+                          json=annotation)
+
+    def update_annotation(self, document_id, annotation_id, new_data):
+        return self._put(
+            'documents/{}/annotations/{}'.format(document_id, annotation_id),
+            json=new_data,
+        )
+
+    def delete_annotation(self, document_id, annotation_id):
+        return self._delete(
+            'documents/{}/annotations/{}'.format(document_id, annotation_id))
+
     @classmethod
     def sha256(cls, file_path):
         with open(file_path, 'rb') as f:
@@ -83,17 +109,36 @@ class API:
     def _post(self, endpoint, data=None, json=None, **kwargs):
         return self._request('post', endpoint, data=data, json=json, **kwargs)
 
+    def _put(self, endpoint, data=None, json=None, **kwargs):
+        response = self._raw_request(
+            'put', endpoint, data=data, json=json, **kwargs
+        )
+        response.raise_for_status()
+
     def _delete(self, endpoint, **kwargs):
-        return self._request('delete', endpoint, **kwargs)
+        response = self._raw_request('delete', endpoint, **kwargs)
+        response.raise_for_status()
 
     def _request(self, method, endpoint, **kwargs):
+        response = self._raw_request(method, endpoint, **kwargs)
+        response.raise_for_status()
+        return response.json()
+
+    def _raw_request(self, method, endpoint, **kwargs):
         kwargs.setdefault('headers', {})
         kwargs['headers'].update(self._headers)
 
-        response = requests.request(
+        return requests.request(
             method,
             '{}{}'.format(self.base_url, endpoint),
             **kwargs
         )
-        response.raise_for_status()
-        return response.json()
+
+    def _ndjson_request(self, method, endpoint, **kwargs):
+        kwargs['stream'] = True
+        kwargs.setdefault('headers', {})
+        kwargs['headers']['Accept'] = 'application/x-ndjson'
+        response = self._raw_request(method, endpoint, **kwargs)
+
+        for line in response.iter_lines():
+            yield json.loads(line.decode('utf-8'))
