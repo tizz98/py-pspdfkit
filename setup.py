@@ -1,6 +1,6 @@
 from setuptools import setup
-from pspdfkit import __version__
 
+__version__ = '0.1.4'
 
 setup(
     name="py-pspdfkit",
