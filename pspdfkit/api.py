@@ -2,7 +2,6 @@ import hashlib
 import json
 import os
 
-import magic
 import requests
 
 
@@ -17,6 +16,8 @@ class API:
     >>>     'cc90ea63a926fe36a9c92fab0ca246db40f34e39170764153c13e427e4acc1fb'
     >>> )
     """
+    PDF_MIME_TYPE = 'application/pdf'
+
     def __init__(self, host, api_key):
         self.host = host
         self.api_key = api_key
@@ -36,19 +37,14 @@ class API:
             return self.upload_file_from_obj(file_obj, file_name)
 
     def upload_file_from_obj(self, file_obj, file_name):
-        try:
-            mime_type = magic.from_buffer(file_obj.read(1024), mime=True)
-        finally:
-            file_obj.seek(0)
-
         return self._post('documents', files={
             'file': (
                 file_name,
                 file_obj,
-                mime_type,
+                self.PDF_MIME_TYPE,
                 {},
             ),
-        })
+        }, headers={'Content-Type': self.PDF_MIME_TYPE})
 
     def upload_file_from_url(self, url, sha256):
         return self._post('documents', json={'url': url, 'sha256': sha256})

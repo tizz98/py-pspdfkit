@@ -16,7 +16,6 @@ setup(
     license="MIT",
     keywords="pspdfkit pdf",
     install_requires=[
-        "python-magic==0.4.15",
         "requests==2.18.4",
     ],
     packages=[
