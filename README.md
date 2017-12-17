@@ -13,3 +13,7 @@ client.upload_file_from_url(
     'cc90ea63a926fe36a9c92fab0ca246db40f34e39170764153c13e427e4acc1fb'
 )
 ```
+
+## Web application examples
+
+- [Django](https://github.com/tizz98/pspdfkit-server-example-django)
