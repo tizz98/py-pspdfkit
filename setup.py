@@ -1,6 +1,6 @@
 from setuptools import setup
 
-__version__ = '0.1.5'
+__version__ = '0.2.5'
 
 setup(
     name="py-pspdfkit",
@@ -16,7 +16,7 @@ setup(
     license="MIT",
     keywords="pspdfkit pdf",
     install_requires=[
-        "requests==2.18.4",
+        "requests>=2.22,<3.0",
     ],
     packages=[
         "pspdfkit",
