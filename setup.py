@@ -13,6 +13,7 @@ setup(
     author_email="elijah@elijahwilson.me",
     description="A simple API wrapper for PSPDFKit",
     long_description=open('README.md').read(),
+    long_description_content_type="text/markdown",
     license="MIT",
     keywords="pspdfkit pdf",
     install_requires=[
